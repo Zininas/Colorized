@@ -9,85 +9,41 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var redSliderValue = Double.random(in: 0...255)
-    @State private var greenSliderValue = Double.random(in: 0...255)
-    @State private var blueSliderValue = Double.random(in: 0...255)
+    @State private var red = Double.random(in: 0...255).rounded()
+    @State private var green = Double.random(in: 0...255).rounded()
+    @State private var blue = Double.random(in: 0...255).rounded()
+    
+    @FocusState private var isInputeActive: Bool
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundColor(.blue)
-            .ignoresSafeArea()
-            VStack {
-                ColorizedView(
-                    colorView: Color(
-                        red: redSliderValue/255,
-                        green: greenSliderValue/255,
-                        blue: blueSliderValue/255))
+            Color(.blue)
+                .ignoresSafeArea()
+            VStack(spacing: 30) {
+                ColorView(red: red, green: green, blue: blue)
                 
                 VStack {
-                    ColorSliderView(value: $redSliderValue, accentColor: .red)
-                    ColorSliderView(value: $greenSliderValue, accentColor: .green)
-                    ColorSliderView(value: $blueSliderValue, accentColor: .blue)
+                    ColorSliderView(value: $red, sliderColor: .red)
+                    ColorSliderView(value: $green, sliderColor: .green)
+                    ColorSliderView(value: $blue, sliderColor: .blue)
                 }
-                .padding()
-                
+                .frame(height: 150)
+                .focused($isInputeActive)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard){
+                        Spacer()
+                        Button("Done") {
+                            isInputeActive = false
+                        }
+                    }
+                }
                 Spacer()
-                
             }
+            .padding()
         }
-    }
-}
-
-struct ColorizedView: View {
-    let colorView: Color
-    
-    var body: some View {
-                ZStack {
-                    Rectangle()
-                        .frame(width: 365, height: 140)
-                        .foregroundStyle(.white)
-                        .clipShape(.rect(cornerRadius: 25))
-                        .shadow(radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
-                    Rectangle()
-                        .frame(width: 355, height: 130)
-                        .foregroundStyle(colorView)
-                        .clipShape(.rect(cornerRadius: 20))
-                }
-                .padding()
-            }
+        .onTapGesture {
+            isInputeActive = false
         }
-
-struct ColorSliderView: View {
-    
-    @Binding var value: Double
-    let accentColor: Color
-    
-    var body: some View {
-        HStack {
-                    Text("\(lround(value))")
-                        .foregroundStyle(.white)
-                        .frame(width: 50)
-                        .font(.title3)
-                        .bold()
-                    Slider(value: $value, in: 0...255, step: 1)
-                        .accentColor(accentColor)
-                        .background(in: .capsule)
-                        .blur(radius: 0.3)
-                        .shadow(radius: 5)
-                }
-            }
-        }
-
-struct TextFildeView: View {
-    @Binding var value: String
-    
-    var body: some View {
-        TextField("0", text: $value)
-            .textFieldStyle(.roundedBorder)
-            .frame(width: 55)
-            .font(.title3)
-            .bold()
     }
 }
 
